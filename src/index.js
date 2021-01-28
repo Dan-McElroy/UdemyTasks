@@ -46,6 +46,26 @@ app.get('/users/:id', async (req, res) => {
     }
 })
 
+app.patch('/users/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['name', 'email', 'password', 'age']
+    const disallowedUpdates = updates.filter(update => !allowedUpdates.includes(update))
+
+    if (disallowedUpdates.length > 0) {
+        return res.status(400).send({ error: `Invalid updates! Field(s) ${disallowedUpdates.join(', ')} cannot be updated.` })
+    }
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        if (!user) {
+            return res.sendStatus(404)
+        }
+        res.send(user)
+    } catch(e) {
+        console.log(e)
+        res.status(400).send(e)
+    }
+})
+
 app.post('/tasks', async (req, res) => {
     const task = new Task(req.body)
     
