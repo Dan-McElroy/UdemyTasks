@@ -1,10 +1,9 @@
 require('../src/db/mongoose')
 const Task = require('../src/models/task')
 
-Task.findByIdAndDelete('6012bca1c100320420d2a5ed').then(result => {
-    console.log(result)
-    return Task.countDocuments({ completed: false })
-}).then(result => {
-    console.log(`Remaining incomplete tasks: ${result}`)
-})
-.catch(console.log)
+const deleteTaskAndCount = async (id) => {
+    await Task.findByIdAndDelete(id)
+    return await Task.countDocuments({ completed: false })
+}
+
+deleteTaskAndCount('6012d29d3d7e9a25c06c8d7c').then(console.log).catch(console.log)
