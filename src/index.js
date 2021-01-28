@@ -51,6 +51,21 @@ app.post('/tasks', (req, res) => {
     })
 })
 
+app.get('/tasks/:id', (req, res) => {
+
+    const _id = req.params.id
+
+    Task.findById(_id).then(task => {
+        if (!task) {
+            return res.sendStatus(404)
+        }
+        res.send(task)
+    }).catch(e => {
+        console.log(e)
+        res.sendStatus(500)
+    })
+})
+
 app.get('/tasks', (req, res) => {
     Task.find({}).then(tasks => {
         res.send(tasks)
