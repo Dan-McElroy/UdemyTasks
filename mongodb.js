@@ -2,10 +2,6 @@ const mongodb = require('mongodb')
 
 const { MongoClient, ObjectID } = mongodb
 
-const id = new ObjectID()
-console.log(id)
-console.log(id.getTimestamp())
-
 const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
 
@@ -15,50 +11,27 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true, useUnifiedTopology: 
     }
     const db = client.db(databaseName)
 
-    db.collection('users').insertOne({
-        _id: id,
-        name: 'Vikram',
-        age: 32
-    }, (error, result) => {
-        if (error) {
-            return console.log('Unable to insert user')
-        }
-        console.log(result.ops)
+    db.collection('users').find({ age: 28 }).toArray((error, users) => {
+        console.log(users)
+    })
+    
+    db.collection('users').find({ age: 28 }).count((error, count) => {
+        console.log(count)
     })
 
-    // db.collection('users').insertMany([
-    //     {
-    //     name: 'Jen',
-    //     age: 31
-    // }, {
-    //     name: 'Gunther',
-    //     age: 65
-    // }], (error, result) => {
-    //     if (error) {
-    //         return console.log('Unable to insert documents!')
-    //     }
-    //     console.log(result.ops)
-    // })
+    db.collection('tasks').findOne({ _id: new ObjectID('60129c68fbd9071050acee59')}, (error, task) => {
+        if (error) {
+            return console.log(error)
+        }
+        console.log(task.description)
+    })
 
-    // db.collection('tasks').insertMany([
-    //     {
-    //         description: 'Do the first thing',
-    //         completed: true
-    //     },
-    //     {
-    //         description: 'Do the second thing',
-    //         completed: false
-    //     },
-    //     {
-    //         description: 'Do the third thing',
-    //         completed: false
-    //     }
-    // ], (error, result) => {
-    //     if (error) {
-    //         return console.log('Unable insert tasks!')
-    //     }
-    //     console.log(result.ops)
-    // })
-
-
+    db.collection('tasks').find({ completed: false }).toArray((error, tasks) => {
+        if (error) {
+            return console.log(error)
+        }
+        tasks.forEach(task => {
+            console.log(task.description)
+        })
+    })
 })
