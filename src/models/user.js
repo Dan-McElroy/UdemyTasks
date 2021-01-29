@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         validate(value) {
             if (!validator.isEmail(value)) {
-                throw new Error ('Email is invalid')
+                throw new Error('Email is invalid')
             }
         },
     },
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         validate(value) {
-            if (value <0) {
+            if (value < 0) {
                 throw new Error('Age must be a positive number')
             }
         }
@@ -49,11 +49,11 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
-userSchema.methods.generateAuthToken = async function() {
+userSchema.methods.generateAuthToken = async function () {
     const user = this
 
-    const token = jwt.sign({ _id: user._id.toString()}, 'thisishisnewcourse')
-    
+    const token = jwt.sign({ _id: user._id.toString() }, 'thisishisnewcourse')
+
     user.tokens = user.tokens.concat({ token })
     await user.save()
 
@@ -75,7 +75,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     const user = this
 
     if (user.isModified('password')) {
