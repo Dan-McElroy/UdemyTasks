@@ -4,7 +4,16 @@ const auth = require('../middleware/auth')
 const multer = require('multer')
 
 const upload = multer({
-    dest: 'avatars'
+    dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jp(e)?g|png)$/)) {
+            return cb(new Error('Please upload an image file'))
+        }
+        cb(undefined, true)
+    }
 })
 
 const router = new express.Router()
