@@ -1,15 +1,18 @@
 const express = require('express')
 const Task = require('../models/task')
+const auth = require('../middleware/auth')
 
 const router = new express.Router()
 
-router.post('/tasks', async (req, res) => {
-    const task = new Task(req.body)
-    
+router.post('/tasks', auth, async (req, res) => {
+    const task = new Task({
+        ...req.body,
+        owner: req.user._id
+    })
     try {
         await task.save()
         res.status(201).send(task)
-    } catch(e) {
+    } catch (e) {
         res.status(400).send(e)
     }
 })
@@ -18,7 +21,7 @@ router.get('/tasks', async (req, res) => {
     try {
         const tasks = await Task.find({})
         res.send(tasks)
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(500)
     }
@@ -33,7 +36,7 @@ router.get('/tasks/:id', async (req, res) => {
             return res.sendStatus(404)
         }
         res.send(task)
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(500)
     }
@@ -57,7 +60,7 @@ router.patch('/tasks/:id', async (req, res) => {
             return res.sendStatus(404)
         }
         res.send(task)
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.status(500).send(e)
     }
@@ -70,7 +73,7 @@ router.delete('/tasks/:id', async (req, res) => {
             return res.sendStatus(404)
         }
         res.send(task)
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.status(500).send(e)
     }
