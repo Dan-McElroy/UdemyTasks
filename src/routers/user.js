@@ -1,6 +1,11 @@
 const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const multer = require('multer')
+
+const upload = multer({
+    dest: 'avatars'
+})
 
 const router = new express.Router()
 
@@ -43,6 +48,10 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     } catch (e) {
         res.sendStatus(500)
     }
+})
+
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    res.sendStatus(200)
 })
 
 router.get('/users/me', auth, async (req, res) => {
