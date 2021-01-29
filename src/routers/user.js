@@ -71,6 +71,21 @@ router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+
+        if (!user || !user.avatar) {
+            throw new Error()
+        }
+
+        res.set('Content-Type', 'image/jpg')
+        res.send(user.avatar)
+    } catch (e) {
+        res.sendStatus(404)
+    }
+})
+
 router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password', 'age']
@@ -105,7 +120,7 @@ router.delete('/users/me/avatar', auth, async (req, res) => {
     try {
         await req.user.save()
         res.send()
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.status(500).send(e)
     }
