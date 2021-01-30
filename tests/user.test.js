@@ -1,24 +1,10 @@
-const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const request = require('supertest')
 const app = require('../src/app')
 const User = require('../src/models/user')
+const { userOneId, userOne, setupDatabase } = require('./fixtures/db')
 
-const userOneId = new mongoose.Types.ObjectId()
-const userOne = {
-    _id: userOneId,
-    name: 'Mike',
-    email: 'mike@example.com',
-    password: 'testerpasser',
-    tokens: [{
-        token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
-    }]
-}
-
-beforeEach(async () => {
-    await User.deleteMany()
-    await new User(userOne).save()
-})
+beforeEach(setupDatabase)
 
 test('Should sign up a new user', async () => {
     const response = await request(app).post('/users').send({
@@ -113,7 +99,6 @@ test('Should update valid user fields', async () => {
         .send(updates)
         .expect(200)
 
-    console.log(userOneId)
     const user = await User.findById(userOneId)
     expect(user).toEqual(expect.objectContaining(updates))
 })
@@ -126,7 +111,6 @@ test('Should update valid user fields', async () => {
         .send(updates)
         .expect(400)
 
-    console.log(userOneId)
     const user = await User.findById(userOneId)
     expect(user).not.toEqual(expect.objectContaining(updates))
 })
